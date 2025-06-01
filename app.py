@@ -7,7 +7,8 @@ import base64
 st.set_page_config(
     page_title="E1A Data Analytics",
     page_icon="📊",
-    layout="centered",
+    layout="wide",
+    #layout="centered",
     initial_sidebar_state="auto"
 )
 
