@@ -143,19 +143,23 @@ with col2:
 st.markdown("---")
 
 # --- Seção "Sobre Nós" com Imagem ---
-st.header("Sobre Nós")
-st.write(
-    """
-    A E1A Data Analytics é uma empresa especializada em transformar dados brutos em **insights estratégicos** para o seu negócio.
-    Atuamos nas frentes de **Business Intelligence (BI)**, **Análise de Dados** e **Ciência de Dados**,
-    oferecendo soluções completas que permitem a você tomar decisões mais inteligentes e embasadas.
-    """
-)
-try:
-    st.image("data1.jpg", caption="Transformando dados em insights", use_column_width=True) # Imagem para a seção "Sobre Nós"
-except FileNotFoundError:
-    st.warning("Imagem 'data1.jpg' não encontrada. Certifique-se de que está na mesma pasta.")
-    st.image("https://placehold.co/600x300/cccccc/333333?text=Imagem+Sobre+Nós", use_column_width=True)
+col_pilares_1, col_pilares_2 = st.columns([3, 1])
+
+with col_pilares_1:
+    st.header("Sobre Nós")
+    st.write(
+        """
+        A E1A Data Analytics é uma empresa especializada em transformar dados brutos em **insights estratégicos** para o seu negócio.
+        Atuamos nas frentes de **Business Intelligence (BI)**, **Análise de Dados** e **Ciência de Dados**,
+        oferecendo soluções completas que permitem a você tomar decisões mais inteligentes e embasadas.
+        """
+    )
+#with col_pilares_2:
+#    try:
+#        st.image("data1.jpg", caption="Transformando dados em insights", use_column_width=True) # Imagem para a seção "Sobre Nós"
+#    except FileNotFoundError:
+#        st.warning("Imagem 'data1.jpg' não encontrada. Certifique-se de que está na mesma pasta.")
+#        st.image("https://placehold.co/600x300/cccccc/333333?text=Imagem+Sobre+Nós", use_column_width=True)
 
 
 # --- Como Ajudamos as Empresas ---
