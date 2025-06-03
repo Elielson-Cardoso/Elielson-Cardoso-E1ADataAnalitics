@@ -1,212 +1,274 @@
 import streamlit as st
+import pandas as pd # Mantido caso use em outras partes, não usado no gráfico HTML
+import numpy as np  # Mantido caso use em outras partes, não usado no gráfico HTML
+import time # Mantido caso use em outras partes, não usado no gráfico HTML
 import datetime
-# import io # Não utilizado
-# import base64 # Não utilizado
+import streamlit.components.v1 as components
 
 # --- Configurações da Página ---
 st.set_page_config(
-    page_title="E1A Data Analytics",
-    page_icon="📊",
+    page_title="E1A Data Analytics - Ouro",
+    page_icon="🌟",
     layout="wide",
     initial_sidebar_state="auto"
 )
 
-# --- Cores personalizadas (baseadas na logo e tema de dados) ---
-primary_color = "#264653"    # Azul escuro/petróleo
-secondary_color = "#2a9d8f"  # Verde/azul mais claro
-text_color = "#333333"       # Cinza escuro para o texto principal
-background_color = "#F4F6F8"  # Cinza claro para o fundo
-accent_color = "#e9c46a"     # Um toque de amarelo/dourado para destaque
-footer_text_color = "#6c757d" # Cor para o texto do rodapé
+# --- Nova Paleta de Cores (Tema Ouro e Profissional) ---
+primary_color = "#B08D57"      # Ouro envelhecido/Bronze - Para títulos e elementos principais
+secondary_color = "#4A4A4A"    # Cinza Chumbo - Para botões, elementos secundários
+text_color = "#333333"         # Cinza Escuro - Texto principal
+background_color = "#FDFBF5"   # Branco Neve/Off-white com leve tom creme - Fundo principal
+accent_color = "#D4AF37"       # Ouro Metálico Suave - Para destaques, alertas
+widget_background_color = "#FFFFFF" # Branco puro - Para fundos de widgets/cards se necessário
+footer_text_color = "#555555"   # Cinza para o texto do rodapé
+
 
 # --- Injeção de CSS Customizado para o Tema ---
 st.markdown(
     f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {{
+        font-family: 'Inter', sans-serif;
+        color: {text_color};
+    }}
 
     .stApp {{
         background-color: {background_color};
-        color: {text_color};
-        font-family: 'Inter', sans-serif;
-        padding-top: 2rem; /* Adiciona um pouco de espaço no topo */
-        padding-bottom: 2rem; /* Adiciona um pouco de espaço na parte inferior */
+        padding-top: 2.5rem; /* Reduzido padding no topo */
+        padding-bottom: 2.5rem; /* Reduzido padding na base */
     }}
-    .css-1d391kg {{ /* Container principal do Streamlit - Pode precisar de ajuste dependendo da versão do Streamlit */
-        padding-left: 1rem;
-        padding-right: 1rem;
+
+    .main .block-container {{
+        padding-left: 1.5rem !important; /* Reduzido padding lateral */
+        padding-right: 1.5rem !important; /* Reduzido padding lateral */
     }}
-    /* Para versões mais recentes do Streamlit, o seletor do container principal pode ser mais estável assim:
-       [data-testid="stAppViewContainer"] .main .block-container {{ ... }}
-       ou de forma mais geral para o block-container:
-       .block-container {{
-           padding-left: 1rem !important;
-           padding-right: 1rem !important;
-       }}
-    */
+
     h1, h2, h3, h4, h5, h6 {{
         color: {primary_color};
-        font-weight: 700; /* Mais peso para títulos */
-        margin-bottom: 0.8em;
+        font-weight: 700;
+        margin-bottom: 0.6em;
     }}
+    h1 {{ font-size: 2.6em; letter-spacing: -0.5px; }}
+    h2 {{ font-size: 2.0em; }}
+    h3 {{ font-size: 1.6em; }}
+
+    p, .stMarkdown p {{
+        font-size: 1.0em; /* Ligeiramente reduzido para mais concisão */
+        line-height: 1.7;
+        margin-bottom: 1em;
+        color: {text_color};
+    }}
+
     .stButton>button {{
         background-color: {secondary_color};
         color: white;
         border-radius: 8px;
         border: none;
         padding: 12px 25px;
-        font-size: 16px;
-        cursor: pointer;
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-        transition: all 0.3s ease;
+        font-size: 15px; /* Ligeiramente reduzido */
         font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        transition: all 0.25s ease-in-out;
     }}
     .stButton>button:hover {{
-        background-color: #218c7d; /* Um tom ligeiramente mais escuro ao passar o mouse */
-        box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
+        background-color: {primary_color};
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
         transform: translateY(-2px);
     }}
-    .stImage {{ /* Estilo para o container da imagem do Streamlit */
-        border-radius: 12px;
-        box-shadow: 4px 4px 10px rgba(0,0,0,0.1);
-        margin-bottom: 1rem; /* Espaço abaixo das imagens */
-        text-align: center; /* Centraliza a imagem se ela for menor que a coluna */
+
+    .stImage {{
+        margin-bottom: 1.2rem;
+        text-align: center;
     }}
-    .stImage img {{ /* Estilo para a tag img dentro do container */
-        border-radius: 12px; /* Garante que a imagem também tenha bordas arredondadas */
+    .stImage img {{
+        border-radius: 10px; /* Levemente reduzido */
+        box-shadow: 0 6px 15px rgba(0,0,0,0.07);
+        border: 1px solid #eee;
+        max-width: 100%;
+        height: auto;
     }}
+
     .stAlert {{
-        background-color: {accent_color};
-        color: {text_color}; /* Alterado para text_color para melhor contraste, ou pode ser #000 */
+        background-color: {accent_color}33;
+        color: {text_color};
         border-radius: 8px;
         padding: 15px;
         margin-top: 20px;
-        border: 1px solid {accent_color}; /* Borda sutil */
+        border: 1px solid {accent_color};
+        font-weight: 500;
     }}
-    .stMarkdown p {{
-        font-size: 1.05em;
-        line-height: 1.7;
-        margin-bottom: 1em;
-    }}
+    /* Ajuste para ícone do st.Alert se necessário, pode variar com versões do Streamlit */
+    /* .stAlert .st-emotion-cache-1wmy9hl {{ color: {primary_color}; }} */
+
     .stMarkdown ul {{
-        list-style-type: none; /* Remove marcadores de lista padrão */
+        list-style-type: none;
         padding-left: 0;
     }}
     .stMarkdown ul li {{
         margin-bottom: 0.5em;
         position: relative;
-        padding-left: 1.5em;
+        padding-left: 1.6em;
+        font-size: 1.0em; /* Ligeiramente reduzido */
+        line-height: 1.65;
     }}
     .stMarkdown ul li::before {{
-        content: '•'; /* Adiciona um marcador de lista personalizado */
-        color: {secondary_color};
+        content: '⭐';
+        color: {accent_color};
         position: absolute;
         left: 0;
-        font-weight: bold;
+        font-size: 1.0em;
+        top: 1px;
     }}
+
+    hr {{
+        border: none;
+        border-top: 1px solid #ddd;
+        margin-top: 2rem; /* Reduzido */
+        margin-bottom: 2rem; /* Reduzido */
+    }}
+
     .footer {{
         font-size: 0.9em;
         color: {footer_text_color};
         text-align: center;
         margin-top: 3rem;
-        padding-top: 1rem;
+        padding-top: 1.2rem;
         border-top: 1px solid #e0e0e0;
+    }}
+    .footer p {{
+        margin-bottom: 0.4em;
+        line-height: 1.5;
     }}
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# --- Geração do QR Code para WhatsApp ---
-# O número do WhatsApp deve incluir o código do país (55 para Brasil) e DDD.
-whatsapp_number_display = "(14) 99873-6036" # Para exibição
-whatsapp_number_link = "5514998736036" # Para o link wa.me
+# --- Geração do Link para WhatsApp ---
+whatsapp_number_display = "(14) 99873-6036"
+whatsapp_number_link = "5514998736036"
 whatsapp_url = f"https://wa.me/{whatsapp_number_link}"
 
-# --- Cabeçalho com Logo e Título ---
-col1, col2 = st.columns([1, 4], gap="medium") # Adicionado gap
-with col1:
-    try:
-        st.image("logo.jpg", width=120) # Caminho para sua logo
-    except FileNotFoundError:
-        st.warning("Logo não encontrada! Verifique o caminho 'logo.jpg'.")
-        st.image("https://placehold.co/120x120/cccccc/333333?text=E1A", width=120) # Placeholder
+# --- Cabeçalho com Logo, Título e Gráfico ---
+col_logo, col_title, col_chart = st.columns([1, 3, 3], gap="medium")
 
-with col2:
+with col_logo:
+    try:
+        st.image("logo.jpg", width=120)
+    except FileNotFoundError:
+        st.warning("Logo não encontrada.")
+        st.image(f"https://placehold.co/100x100/{primary_color.replace('#','')}/{background_color.replace('#','')}?text=E1A", width=100)
+
+with col_title:
     st.title("E1A Data Analytics")
-    st.markdown("Transformando dados brutos em **insights estratégicos** para o seu negócio.")
+    st.markdown("##### Transformando dados em **insights estratégicos**.")
+
+# --- Nova Terceira Coluna para o Gráfico Animado HTML/SVG ---
+with col_chart:
+    st.markdown("###### Performance Ilustrativa")
+
+    # Cores para as linhas do gráfico
+    cor_linha_constante = secondary_color  # Cinza Chumbo
+    cor_linha_crescente = accent_color     # Ouro Metálico Suave
+
+    html_chart = f"""
+    <div style="width: 100%; height: 100px; border: 1px solid #dddddd33; border-radius: 5px; overflow: hidden;">
+      <svg width="100%" height="100%" viewBox="0 0 300 100" preserveAspectRatio="xMidYMid meet">
+        <line x1="10" y1="30" x2="290" y2="30" stroke="{cor_linha_constante}" stroke-width="2"/>
+
+        <polyline id="dynamic-growing-line" points="10,70" stroke="{cor_linha_crescente}" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <script>
+      const growingLineElement = document.getElementById('dynamic-growing-line');
+      const svgViewBoxWidth = 300;
+      const startX = 10;
+      const startY = 70; // Y inicial da linha crescente
+      let currentX = startX;
+      let currentY = startY;
+
+      let growingPoints = [[startX, startY]]; // Array para armazenar os pontos da linha crescente
+
+      function animateChart() {{
+        currentX += 1.0; // Velocidade do crescimento em X (pixels por frame no viewBox)
+        currentY -= 0.10; // Leve inclinação para cima (pixels por frame no viewBox)
+
+        // Verifica se a linha atingiu a borda do viewBox
+        if (currentX > svgViewBoxWidth - 10 || currentY < 40) {{ // Reseta se atingir o final ou muito alto
+          currentX = startX;
+          currentY = startY;
+          growingPoints = [[startX, startY]]; // Reinicia os pontos
+        }} else {{
+          growingPoints.push([currentX, currentY]); // Adiciona o novo ponto
+        }}
+
+        // Atualiza o atributo 'points' do elemento polyline
+        growingLineElement.setAttribute('points', growingPoints.map(p => p.join(',')).join(' '));
+
+        requestAnimationFrame(animateChart); // Chama a próxima frame da animação
+      }}
+      requestAnimationFrame(animateChart); // Inicia a animação
+    </script>
+    """
+    components.html(html_chart, height=120) # Ajuste a altura conforme necessário
 
 st.markdown("---")
 
-# --- Seção "Sobre Nós" ---
-# Removida a definição de colunas aqui, pois não havia imagem diretamente associada a esta seção.
-# O texto fluirá ocupando a largura disponível.
-st.header("Sobre Nós")
-st.write(
-    """
-    A E1A Data Analytics é uma empresa especializada em transformar dados brutos em **insights estratégicos** para o seu negócio.
-    Atuamos nas frentes de **Business Intelligence (BI)**, **Análise de Dados** e **Ciência de Dados**,
-    oferecendo soluções completas que permitem a você tomar decisões mais inteligentes e embasadas.
-    """
-)
+# --- Seção "Sobre Nós" e "Nossos Pilares" ---
+# (Mantida a estrutura de 3 colunas que você já tinha corrigido)
+col_pilares_header, col_pilares_texto, col_pilares_img = st.columns([2, 3, 2], gap="large")
 
-# --- Nossos Pilares de Atuação ---
-st.header("Nossos Pilares de Atuação:")
-
-col_pilares_texto, col_pilares_img = st.columns([3, 1], gap="large") # Renomeado para clareza e adicionado gap
+with col_pilares_header:
+    st.header("Quem Somos")
+    st.markdown(
+        """
+        <ul>
+            <li><strong>Na E1A Data Analytics:</strong> desvendamos o potencial oculto nos dados.</li>
+            <li><strong>Nossa Missão:</strong> é capacitar empresas com clareza e inteligência analítica,
+            transformando informações complexas em decisões estratégicas que impulsionam crescimento e inovação.</li>
+        </ul>
+        """, unsafe_allow_html=True
+    )
 
 with col_pilares_texto:
-    st.markdown("📈 **Business Intelligence (BI):** Visualizamos e entendemos seus dados através de painéis interativos e relatórios claros, proporcionando uma visão 360º do seu desempenho.")
-    st.markdown("🔍 **Análise de Dados:** Nossas análises aprofundadas revelam padrões, tendências, oportunidades e desafios ocultos em seus dados, impulsionando a tomada de decisão.")
-    st.markdown("🔮 **Ciência de Dados:** Construímos modelos preditivos robustos para antecipar cenários futuros, otimizar suas estratégias e gerar valor a longo prazo.")
+    st.header("Nossos Pilares")
+    st.markdown(
+        """
+        <ul>
+            <li><strong>Business Intelligence (BI):</strong> Painéis interativos e relatórios dinâmicos para uma visão 360º do seu desempenho e identificação de tendências.</li>
+            <li><strong>Análise de Dados Avançada:</strong> Descoberta de padrões, correlações e anomalias para otimização e mitigação de riscos.</li>
+            <li><strong>Ciência de Dados e Modelagem Preditiva:</strong> Algoritmos de machine learning para prever cenários, personalizar experiências e automatizar processos.</li>
+        </ul>
+        """, unsafe_allow_html=True
+    )
 
 with col_pilares_img:
-    try:
-        st.image("data2.jpg", caption="O poder dos dados", width=180) # Tamanho da imagem ajustado
-    except FileNotFoundError:
-        st.warning("Imagem 'data2.jpg' não encontrada.")
-        st.image("https://placehold.co/180x180/cccccc/333333?text=Imagem+Pilares", width=180)
-
-st.write("Na E1A Data Analytics, seu sucesso é impulsionado pelo **poder dos dados**.")
-
-st.markdown("---")
-
-# --- Contato ---
-st.header("Fale Conosco!")
-st.subheader("Nosso Especialista em Dados")
-
-col_contact_info, col_contact_img = st.columns([2, 1], gap="large") # Renomeado e adicionado gap
-
-with col_contact_info:
+    st.header("Fale Conosco!")
     st.markdown(f"""
-    **Elielson Cardoso**<br>
-    *Cientista de Dados e Fundador*
+        **Elielson Cardoso**<br>
+        *Cientista de Dados e Fundador*
 
-    📞 Contato: <a href="{whatsapp_url}" target="_blank">WhatsApp: {whatsapp_number_display}</a>
-    """, unsafe_allow_html=True)
-    # Observação: A frase abaixo refere-se a um QR Code.
-    # Certifique-se de que 'data1.jpg' (exibida ao lado) seja de fato um QR Code para o WhatsApp,
-    # ou altere esta frase/imagem para evitar confusão.
-    st.write("Escaneie o QR Code ao lado para nos enviar uma mensagem direta no WhatsApp e iniciar sua jornada de dados!")
+        <p style="font-size: 1.05em;">Pronto para dar o próximo passo na sua jornada de dados? <br>
+        Entre em contato para uma consultoria personalizada.</p>
 
-with col_contact_img:
-    try:
-        st.image("data1.jpg", caption="Entre em contato", width=180) # Tamanho da imagem ajustado
-    except FileNotFoundError:
-        st.warning("Imagem 'data1.jpg' não encontrada.")
-        st.image("https://placehold.co/180x180/cccccc/333333?text=Contato", width=180)
+        📞 **WhatsApp:** <a href="{whatsapp_url}" target="_blank" style="color:{primary_color}; font-weight:600; font-size:1.1em;">{whatsapp_number_display}</a>
+        """, unsafe_allow_html=True)
 
-
-st.markdown("---")
-
-st.info("🚀 Pronto para transformar seus dados em resultados? Entre em contato e descubra como podemos impulsionar o seu negócio!")
+st.markdown(
+    f"<p style='text-align:center; font-size: 1.05em; color: {primary_color}; margin-top:1rem; margin-bottom:1rem;'><strong>Seu sucesso impulsionado por dados.</strong></p>",
+    unsafe_allow_html=True
+)
 
 # --- Rodapé ---
+current_year = datetime.date.today().year
 st.markdown(
     f"""
     <div class="footer">
-        <p>&copy; {datetime.date.today().year} E1A Data Analytics. Todos os direitos reservados.</p>
-        <p>Desenvolvido com Streamlit</p>
+        <p>&copy; {current_year} E1A Data Analytics. Todos os direitos reservados.</p>
+        <p>Consultoria Especializada em Dados | Desenvolvido com Streamlit</p>
     </div>
     """,
     unsafe_allow_html=True
