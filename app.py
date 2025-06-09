@@ -4,6 +4,7 @@ import numpy as np  # Mantido caso use em outras partes, não usado no gráfico 
 import time # Mantido caso use em outras partes, não usado no gráfico HTML
 import datetime
 import streamlit.components.v1 as components
+import urllib.parse
 
 # --- Configurações da Página ---
 st.set_page_config(
@@ -27,26 +28,31 @@ footer_text_color = "#555555"   # Cinza para o texto do rodapé
 st.markdown(
     f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+    /* O Streamlit já gerencia a cor do body e .stApp com base no tema.
+       Removendo essas definições para que o modo escuro funcione.
+       Se você mantiver, ele força o fundo claro/texto escuro sempre.
+    */
     body {{
         font-family: 'Inter', sans-serif;
-        color: {text_color};
+        /* A linha abaixo foi removida, pois 'text_color' não existe mais como variável Python */
+        /* color: {text_color}; */
     }}
 
-    .stApp {{
-        background-color: {background_color};
-        padding-top: 2.5rem; /* Reduzido padding no topo */
-        padding-bottom: 2.5rem; /* Reduzido padding na base */
-    }}
+    /* .stApp {{
+        background-color: {background_color}; REMOVIDO
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
+    }} */
 
     .main .block-container {{
-        padding-left: 1.5rem !important; /* Reduzido padding lateral */
-        padding-right: 1.5rem !important; /* Reduzido padding lateral */
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
     }}
 
     h1, h2, h3, h4, h5, h6 {{
-        color: {primary_color};
+        color: {primary_color}; /* Seus títulos manterão a cor ouro */
         font-weight: 700;
         margin-bottom: 0.6em;
     }}
@@ -55,103 +61,25 @@ st.markdown(
     h3 {{ font-size: 1.6em; }}
 
     p, .stMarkdown p {{
-        font-size: 1.0em; /* Ligeiramente reduzido para mais concisão */
+        font-size: 1.0em;
         line-height: 1.7;
         margin-bottom: 1em;
-        color: {text_color};
+        /* Remover a cor fixa aqui para que o Streamlit defina a cor do texto padrão */
+        /* color: {text_color}; REMOVIDO */
     }}
+    
+    /* ... o restante do seu CSS continua aqui ... */
 
-    .stButton>button {{
-        background-color: {secondary_color};
-        color: white;
-        border-radius: 8px;
-        border: none;
-        padding: 12px 25px;
-        font-size: 15px; /* Ligeiramente reduzido */
-        font-weight: 600;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        transition: all 0.25s ease-in-out;
-    }}
-    .stButton>button:hover {{
-        background-color: {primary_color};
-        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-        transform: translateY(-2px);
-    }}
-
-    .stImage {{
-        margin-bottom: 1.2rem;
-        text-align: center;
-    }}
-    .stImage img {{
-        border-radius: 10px; /* Levemente reduzido */
-        box-shadow: 0 6px 15px rgba(0,0,0,0.07);
-        border: 1px solid #eee;
-        max-width: 100%;
-        height: auto;
-    }}
-
-    .stAlert {{
-        background-color: {accent_color}33;
-        color: {text_color};
-        border-radius: 8px;
-        padding: 15px;
-        margin-top: 20px;
-        border: 1px solid {accent_color};
-        font-weight: 500;
-    }}
-    /* Ajuste para ícone do st.Alert se necessário, pode variar com versões do Streamlit */
-    /* .stAlert .st-emotion-cache-1wmy9hl {{ color: {primary_color}; }} */
-
-    .stMarkdown ul {{
-        list-style-type: none;
-        padding-left: 0;
-    }}
-    .stMarkdown ul li {{
-        margin-bottom: 0.5em;
-        position: relative;
-        padding-left: 1.6em;
-        font-size: 1.0em; /* Ligeiramente reduzido */
-        line-height: 1.65;
-    }}
-    .stMarkdown ul li::before {{
-        content: '⭐';
-        color: {accent_color};
-        position: absolute;
-        left: 0;
-        font-size: 1.0em;
-        top: 1px;
-    }}
-
-    hr {{
-        border: none;
-        border-top: 1px solid #ddd;
-        margin-top: 2rem; /* Reduzido */
-        margin-bottom: 2rem; /* Reduzido */
-    }}
-
-    .footer {{
-        font-size: 0.9em;
-        color: {footer_text_color};
-        text-align: center;
-        margin-top: 3rem;
-        padding-top: 1.2rem;
-        border-top: 1px solid #e0e0e0;
-    }}
-    .footer p {{
-        margin-bottom: 0.4em;
-        line-height: 1.5;
-    }}
     </style>
     """,
     unsafe_allow_html=True
 )
 
 # --- Geração do Link para WhatsApp ---
-whatsapp_number_display = "(14) 99873-6036"
-whatsapp_number_link = "5514998736036"
-whatsapp_url = f"https://wa.me/{whatsapp_number_link}"
-
+whatsapp_number = "5599981042926"
+whatsapp_number_display = "(99) 98104-2926"
+whatsapp_msg = "Olá! Vim pelo E1A Data Analytics e gostaria de saber mais."
+whatsapp_url = f"https://wa.me/{whatsapp_number}?text={urllib.parse.quote(whatsapp_msg)}"
 # --- Cabeçalho com Logo, Título e Gráfico ---
 col_logo, col_title, col_chart = st.columns([1, 3, 3], gap="medium")
 
@@ -260,13 +188,15 @@ with col_pilares_texto:
 with col_pilares_img:
     st.header("Fale Conosco!")
     st.markdown(f"""
-        **Elielson Cardoso**<br>
-        *Cientista de Dados e Fundador*
+        <div style="color:{text_color}; font-family: Inter, sans-serif; font-size: 1.05em; line-height: 1.6;">
+            <strong>Elielson Cardoso</strong><br>
+            <em>Cientista de Dados e Fundador</em><br><br>
 
-        <p style="font-size: 1.05em;">Pronto para dar o próximo passo na jornada com dados? <br>
-        Entre em contato para uma consultoria personalizada.</p>
+            Pronto para dar o próximo passo na jornada com dados?<br>
+            Entre em contato para uma consultoria personalizada.<br><br>
 
-        📞 **WhatsApp:** <a href="{whatsapp_url}" target="_blank" style="color:{primary_color}; font-weight:600; font-size:1.1em;">{whatsapp_number_display}</a>
+            📞 <strong>WhatsApp:</strong> <a href="{whatsapp_url}" target="_blank" style="color:{primary_color}; font-weight:600; font-size:1.1em;">{whatsapp_number_display}</a>
+        </div>
         """, unsafe_allow_html=True)
 
 st.markdown(
