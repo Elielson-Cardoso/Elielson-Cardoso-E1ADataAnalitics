@@ -175,44 +175,55 @@ with col_chart:
     cor_linha_crescente = accent_color     # Ouro Metálico Suave
 
     html_chart = f"""
-    <div style="width: 100%; height: 100px; border: 1px solid #dddddd33; border-radius: 5px; overflow: hidden;">
-      <svg width="100%" height="100%" viewBox="0 0 300 100" preserveAspectRatio="xMidYMid meet">
-        <line x1="10" y1="30" x2="290" y2="30" stroke="{cor_linha_constante}" stroke-width="2"/>
+        <div style="width: 100%; height: 100px; border: 1px solid #dddddd33; border-radius: 5px; overflow: hidden;">
+        <svg width="100%" height="100%" viewBox="0 0 300 100" preserveAspectRatio="xMidYMid meet">
+            <line x1="10" y1="30" x2="290" y2="30" stroke="{cor_linha_constante}" stroke-width="2"/>
+            <polyline id="dynamic-growing-line" points="10,70" stroke="{cor_linha_crescente}" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        </div>
+        <script>
+        (function() {{
+        const growingLineElement = document.getElementById('dynamic-growing-line');
+        const svgViewBoxWidth = 300;
+        const startX = 10;
+        const startY = 70;
+        let currentX = startX;
+        let currentY = startY;
 
-        <polyline id="dynamic-growing-line" points="10,70" stroke="{cor_linha_crescente}" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <script>
-      const growingLineElement = document.getElementById('dynamic-growing-line');
-      const svgViewBoxWidth = 300;
-      const startX = 10;
-      const startY = 70; // Y inicial da linha crescente
-      let currentX = startX;
-      let currentY = startY;
+        let growingPoints = [[startX, startY]];
+        let deltaY = -0.15;
+        let waveCounter = 0;
+        const waveChangeInterval = 50;
 
-      let growingPoints = [[startX, startY]]; // Array para armazenar os pontos da linha crescente
+        function animateChart() {{
+            currentX += 1.0;
+            currentY += deltaY;
 
-      function animateChart() {{
-        currentX += 1.0; // Velocidade do crescimento em X (pixels por frame no viewBox)
-        currentY -= 0.10; // Leve inclinação para cima (pixels por frame no viewBox)
+            waveCounter += 1;
+            if (waveCounter >= waveChangeInterval) {{
+            deltaY *= -1;
+            waveCounter = 0;
+            }}
 
-        // Verifica se a linha atingiu a borda do viewBox
-        if (currentX > svgViewBoxWidth - 10 || currentY < 40) {{ // Reseta se atingir o final ou muito alto
-          currentX = startX;
-          currentY = startY;
-          growingPoints = [[startX, startY]]; // Reinicia os pontos
-        }} else {{
-          growingPoints.push([currentX, currentY]); // Adiciona o novo ponto
+            if (currentX > svgViewBoxWidth - 10 || currentY < 30 || currentY > 80) {{
+            currentX = startX;
+            currentY = startY;
+            growingPoints = [[startX, startY]];
+            deltaY = -0.15;
+            waveCounter = 0;
+            }} else {{
+            growingPoints.push([currentX, currentY]);
+            }}
+
+            growingLineElement.setAttribute('points', growingPoints.map(p => p.join(',')).join(' '));
+            requestAnimationFrame(animateChart);
         }}
 
-        // Atualiza o atributo 'points' do elemento polyline
-        growingLineElement.setAttribute('points', growingPoints.map(p => p.join(',')).join(' '));
+        requestAnimationFrame(animateChart);
+        }})();
+        </script>
+        """
 
-        requestAnimationFrame(animateChart); // Chama a próxima frame da animação
-      }}
-      requestAnimationFrame(animateChart); // Inicia a animação
-    </script>
-    """
     components.html(html_chart, height=120) # Ajuste a altura conforme necessário
 
 st.markdown("---")
@@ -226,9 +237,9 @@ with col_pilares_header:
     st.markdown(
         """
         <ul>
-            <li><strong>Na E1A Data Analytics:</strong> desvendamos o potencial oculto nos dados.</li>
-            <li><strong>Nossa Missão:</strong> é capacitar empresas com clareza e inteligência analítica,
-            transformando informações complexas em decisões estratégicas que impulsionam crescimento e inovação.</li>
+            <li>🚀 <strong>Na E1A Data Analytics:</strong> empresa focada em desvendar o potencial dos dados.</li>
+            <li>🚀 <strong>Nossa Missão:</strong> é capacitar empresas com clareza e inteligência analítica,
+            transformando informações complexas em decisões estratégicas que impulsionam crescimento e inovação do seu negócio.</li>
         </ul>
         """, unsafe_allow_html=True
     )
@@ -238,9 +249,10 @@ with col_pilares_texto:
     st.markdown(
         """
         <ul>
-            <li><strong>Business Intelligence (BI):</strong> Painéis interativos e relatórios dinâmicos para uma visão 360º do seu desempenho e identificação de tendências.</li>
-            <li><strong>Análise de Dados Avançada:</strong> Descoberta de padrões, correlações e anomalias para otimização e mitigação de riscos.</li>
-            <li><strong>Ciência de Dados e Modelagem Preditiva:</strong> Algoritmos de machine learning para prever cenários, personalizar experiências e automatizar processos.</li>
+            <li>📊 <strong>Business Intelligence (BI):</strong> Painéis interativos e relatórios dinâmicos para uma visão 360º do seu desempenho e identificação de tendências.</li>
+            <li>🔍 <strong>Análise de Dados Avançada:</strong> Descoberta de padrões, correlações e anomalias para otimização e mitigação de riscos.</li>
+            <li>🔮 <strong>Ciência de Dados e Modelagem Preditiva:</strong> Algoritmos de machine learning para prever cenários, personalizar experiências e automatizar processos.</li>
+            <li>🤖 <strong>Automatização de Processos:</strong> Criamos soluções inteligentes de automação de processos que otimizam seus fluxos de trabalho.</li>
         </ul>
         """, unsafe_allow_html=True
     )
@@ -251,7 +263,7 @@ with col_pilares_img:
         **Elielson Cardoso**<br>
         *Cientista de Dados e Fundador*
 
-        <p style="font-size: 1.05em;">Pronto para dar o próximo passo na sua jornada de dados? <br>
+        <p style="font-size: 1.05em;">Pronto para dar o próximo passo na jornada com dados? <br>
         Entre em contato para uma consultoria personalizada.</p>
 
         📞 **WhatsApp:** <a href="{whatsapp_url}" target="_blank" style="color:{primary_color}; font-weight:600; font-size:1.1em;">{whatsapp_number_display}</a>
@@ -268,7 +280,7 @@ st.markdown(
     f"""
     <div class="footer">
         <p>&copy; {current_year} E1A Data Analytics. Todos os direitos reservados.</p>
-        <p>Consultoria Especializada em Dados | Desenvolvido com Streamlit</p>
+        <p>Consultoria Especializada em Dados</p>
     </div>
     """,
     unsafe_allow_html=True
