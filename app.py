@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 # --- Configurações da Página ---
 st.set_page_config(
     page_title="E1A Data Analytics - Ouro",
-    page_icon="🌟",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="auto"
 )
