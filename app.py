@@ -188,16 +188,13 @@ with col_pilares_img:
     st.header("Fale Conosco!")
     st.markdown(f"""
         **Elielson Cardoso**<br>
-        *Cientista de Dados e Fundador*
-
-        <p style="font-size: 1.05em;">Pronto para dar o próximo passo na jornada com dados? <br>
-        Entre em contato para uma consultoria personalizada.</p>
+        *Cientista de Dados*
 
         📞 **WhatsApp:** <a href="{whatsapp_url}" target="_blank" style="color:{primary_color}; font-weight:600; font-size:1.1em;">{whatsapp_number_display}</a>
         """, unsafe_allow_html=True)
 
 st.markdown(
-    f"<p style='text-align:center; font-size: 1.05em; color: {primary_color}; margin-top:1rem; margin-bottom:1rem;'><strong>Seu sucesso impulsionado por dados.</strong></p>",
+    f"<p style='text-align:center; font-size: 1.05em; color: {primary_color}; margin-top:1rem; margin-bottom:1rem;'><strong>Tome as melhores decisões impulsionado por dados.</strong></p>",
     unsafe_allow_html=True
 )
 
