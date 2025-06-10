@@ -66,6 +66,19 @@ st.markdown(
         /* Remover a cor fixa aqui para que o Streamlit defina a cor do texto padrão */
         /* color: {text_color}; REMOVIDO */
     }}
+
+    .footer {{
+        font-size: 0.9em;
+        /* Removido o 'color' fixo para o Streamlit gerenciar */
+        text-align: center; /* <<< Adicionado/Ajustado AQUI para centralizar */
+        margin-top: 3rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid #e0e0e0; /* Pode precisar de ajuste para dark mode */
+    }}
+    .footer p {{
+        margin-bottom: 0.4em;
+        line-height: 1.5;
+    }}
     
     /* ... o restante do seu CSS continua aqui ... */
 
